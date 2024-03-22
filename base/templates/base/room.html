@@ -1,0 +1,17 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<a href='{% url "home" %}'>
+Go Back
+</a>
+<br>
+<h1>
+    Welcome to {{myroom.name}} since : {{myroom.created}}
+</h1>
+
+<p>
+{{myroom.description}}
+</p>
+
+{% endblock content %}

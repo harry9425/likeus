@@ -1,16 +1,14 @@
 from django.shortcuts import render
-
-rooms=[
-    {'id':1, 'name':'Learn Django'},
-    {'id':2, 'name':'Python talks'},
-    {'id':3, 'name':'Php Sucks'},
-]
+from .models import Room
 
 def home(request):
-    context={'rooms':rooms}
-    return render(request,'home.html',context)
+    allroom=Room.objects.all()
+    context={'rooms':allroom}
+    return render(request,'base/home.html',context)
 
 
-def about(request):
-    return render(request,'about.html')
+def room(request,pk):
+    myroom=Room.objects.get(id=pk)
+    context={'myroom':myroom}
+    return render(request,'base/room.html',context)
     
