@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<h3>Edit Message:</h3>
+<form action="" method="POST">
+{% csrf_token %}
+
+{{form.as_p}}
+<input type="submit" name="done" value="Done">
+</form>
+
+{% endblock content %}

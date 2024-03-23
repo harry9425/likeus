@@ -15,7 +15,7 @@ class Room(models.Model):
     description=models.CharField(max_length=500,null=True)
     created=models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
-    
+    participants=models.ManyToManyField(User,related_name="participants",blank=True)
     class Meta:
         ordering=['-updated','-created']
     
@@ -23,11 +23,14 @@ class Room(models.Model):
         return self.name
     
 class Message(models.Model):
-    body=models.TextField()
+    body=models.CharField(max_length=50)
     room=models.ForeignKey(Room,on_delete=models.CASCADE)
     created=models.DateTimeField(auto_now_add=True)
     updated=models.DateTimeField(auto_now=True)
     user=models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
+    
+    class Meta:
+        ordering=['updated','created']
     
     def __str__(self):
         return self.body[:50]

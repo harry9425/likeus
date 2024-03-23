@@ -4,14 +4,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from .forms import RoomForm
+from .forms import RoomForm,MessageForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.http import HttpResponse
 
 def loginPage(request):
-    
     if(request.user.is_authenticated): return redirect('home')
-    
+    page="log"
     if(request.method=="POST"):
         username=request.POST.get('username').strip()
         password=request.POST.get('password').strip()
@@ -28,7 +28,25 @@ def loginPage(request):
             except: messages.error(request, "User Don't Exist!!")
             
         else: messages.warning(request, "Fields is Empty!!!")  
-    return render(request,'base/login.html',{})
+    return render(request,'base/login.html',{'pagetype':page})
+
+def registerPage(request):
+    if(request.user.is_authenticated): return redirect('home')
+    page="reg"
+    form=UserCreationForm()
+    if(request.method=="POST"):
+        form=UserCreationForm(request.POST)
+        if(form.is_valid()):
+            user=form.save(commit=False)
+            user.username.strip()
+            user.password.strip()
+            user.save()
+            login(request,user)
+            return redirect('home')
+        else : messages.error(request,"An error occured during registration")
+            
+    context={'pagetype':page,'form':form}
+    return render(request,'base/login.html',context)
 
 def logoutPage(request):
     logout(request)
@@ -46,11 +64,23 @@ def home(request):
     context={'rooms':allroom,'topics':alltopics,'roomscount':roomscount}
     return render(request,'base/home.html',context)
 
-
+@login_required(login_url='login')
 def room(request,pk):
     myroom=Room.objects.get(id=pk)
-    chats=Message.objects.filter(room=myroom.id)
-    context={'myroom':myroom,'roomchats':chats}
+    chats=myroom.message_set.all()
+    participants=myroom.participants.all()
+    roomsize=participants.count()
+    if(request.method=="POST"):
+        body=request.POST.get('comment').strip()
+        if(len(body)>0):
+            message=Message.objects.create(
+            room=myroom,
+            user=request.user,
+            body=body,
+            )
+            myroom.participants.add(message.user)
+            return redirect('room',pk=pk)
+    context={'myroom':myroom,'roomchats':chats, 'participants':participants,'roomsize':roomsize}
     return render(request,'base/room.html',context)
 
 @login_required(login_url='login')
@@ -86,10 +116,32 @@ def update_room(request,pk):
     return render(request,'base/room_form.html',context)
 
 @login_required(login_url='login')
-def delete(request,pk):
+def deleteroom(request,pk):
     room=Room.objects.get(id=pk)
     if(room.host!=request.user): return HttpResponse("Not Authorized")
     if(request.method=="POST"):
         room.delete()
         return redirect('my-room',user=room.host.username)
     return render(request,'base/delete.html',{'obj':room})
+
+@login_required(login_url='login')
+def deletemessage(request,pk):
+    message=Message.objects.get(id=pk)
+    if(message.user!=request.user): return HttpResponse("Not Authorized")
+    if(request.method=="POST"):
+        message.delete()
+        return redirect('room',pk=message.room.id)
+    return render(request,'base/delete.html',{'obj':message})
+
+@login_required(login_url='login')
+def editmessage(request,pk):
+    message=Message.objects.get(id=pk)
+    if(message.user!=request.user): return HttpResponse("Not Authorized")
+    form=MessageForm(instance=message)
+    if(request.method=="POST"):
+        form=MessageForm(request.POST,instance=message)
+        if(form.is_valid()):
+            form.save()
+            return redirect('room',pk=message.room.id)
+    return render(request,'base/editmessage.html',{'form':form})
+

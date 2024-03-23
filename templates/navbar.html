@@ -14,9 +14,15 @@
 
 <div>
     <a href="/">
+        {% if request.user.is_authenticated %}
+        <h1>
+            Hi {{request.user.username}}
+        </h1>
+        {% else %}
         <h1>
             likeUS
         </h1>
+        {% endif %}
     </a>
 </div>
 

@@ -2,33 +2,67 @@
 
 {% block content %}
 
-<a href='{% url "home" %}'>
-Go Back
-</a>
-<br>
-<h1>
-    Welcome to {{myroom.name}} since : {{myroom.created}}
-</h1>
+<style>
+.room-container{
+    display:grid;
+    grid-template-columns:5fr 1fr;
+    padding:20px;
+}
+</style>
 
-<p>
-{{myroom.description}}
-</p>
+<div class="room-container">
 
-<hr>
-
-<div>
-
-    {% for message in roomchats %}
-    
     <div>
-        <small>Sent by: {{message.user.username}}</small>
-        <h3>Message Is: {{message.body}}</h3>
-        <h5>{{message.created}}</h5>
-        <hr>
+        <div>
+            <a href='{% url "home" %}'>
+                Go Back
+            </a>
+            <br>
+            <h1>
+                Welcome to {{myroom.name}} since : {{myroom.created}}
+            </h1>
+            <p>
+                {{myroom.description}}
+            </p>
+            <hr>
+        </div>
+        
+        <div>
+              <h3>Conversations:</h3>
+            {% for message in roomchats %}
+                <small>Sent by: {{message.user.username}}</small>
+                <br>
+                <p>Message Is: {{message.body}}</p>
+                <small>{{message.created|timesince}} ago</small>
+                {% if  request.user.username == message.user.username%}
+                <small>&nbsp;<a href='{% url "edit-message" message.id %}'>Edit</a>&nbsp;&nbsp;<a href='{% url "delete-message" message.id %}'>Delete</a></small>
+                {% endif %}
+                <hr>
+        
+            {% endfor %}
+        
+        </div>
+        
+        <div>
+            <h3>Drop a comment:</h3>
+            <form method="POST" action="">
+                {% csrf_token %}
+                <div>
+                    <input type="text" name="comment" placeholder="Write your view here..."/>
+                    <input type="submit" name="send" value="Send Comment"/>
+                </div>
+            </form>
+        </div>
     </div>
 
-    {% endfor %}
+    <div>
+        <h4>Total participants: {{roomsize}}</h4>
+        {% for x in participants %}
+            <div>
+                <p>@{{x.username}}</p>
+            </div>
+        {% endfor %}
+    </div>
 
 </div>
-
 {% endblock content %}
