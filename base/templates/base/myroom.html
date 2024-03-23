@@ -3,16 +3,14 @@
 {% block content %}
 
 <h1>
-    This is Home Page
+    This is My Rooms Page
 </h1>
-
-<small><a href={% url "create-room" %}>Click here to create a Room</a></small>
 
 <div>
     <div>
         <hr>
 
-        {% for x in rooms %}
+        {% for x in myrooms %}
             <div>
                 <h4>@{{x.host.username}}</h4>
                 <h1>
@@ -20,7 +18,8 @@
                         RoomID: {{x.id}} --- {{x.name}}
                     </a>
                 </h1>
-                <small>{{x.topic.name}}</small>
+                <small>{{x.topic.name}}</small><br>
+                <small><a href='{% url "update-room" x.id%}'>Update Room</a></small>
             </div>
         {% endfor %}
     </div>

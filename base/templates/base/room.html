@@ -14,4 +14,21 @@ Go Back
 {{myroom.description}}
 </p>
 
+<hr>
+
+<div>
+
+    {% for message in roomchats %}
+    
+    <div>
+        <small>Sent by: {{message.user.username}}</small>
+        <h3>Message Is: {{message.body}}</h3>
+        <h5>{{message.created}}</h5>
+        <hr>
+    </div>
+
+    {% endfor %}
+
+</div>
+
 {% endblock content %}
