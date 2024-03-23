@@ -1,4 +1,16 @@
-</div>
+<style>
+
+    .nav-container{
+        display:flex;
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:center;
+        margin: 0px 40px 0px 40px;
+    }
+
+</style>
+
+<div class="nav-container">
 
 <div>
     <a href="/">
@@ -10,8 +22,17 @@
 
 <div>
     <form method="GET" action="{% url "home" %}">
+        {% csrf_token %}
         <input type="text" placeholder="Search here..." name="q"/>
     </form>
+</div>
+
+<div>
+    {% if request.user.is_authenticated %}
+    <a href='{% url "logout" %}'><h3>Logout</h3></a>
+    {% else  %}
+    <a href='{% url "login" %}'><h3>Login</h3></a>
+    {% endif %}
 </div>
 
 </div>
