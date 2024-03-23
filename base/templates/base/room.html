@@ -33,7 +33,7 @@
                 <small>Sent by: {{message.user.username}}</small>
                 <br>
                 <p>Message Is: {{message.body}}</p>
-                <small>{{message.created|timesince}} ago</small>
+                <small>{{message.updated|timesince}} ago</small>
                 {% if  request.user.username == message.user.username%}
                 <small>&nbsp;<a href='{% url "edit-message" message.id %}'>Edit</a>&nbsp;&nbsp;<a href='{% url "delete-message" message.id %}'>Delete</a></small>
                 {% endif %}

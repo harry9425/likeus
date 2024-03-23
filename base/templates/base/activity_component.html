@@ -1,0 +1,10 @@
+<div>
+    <h3>Recent Activity</h3>
+    {% for message in recentactivity %}
+        <small><a href='{% url "profile" message.user.id %}'>@{{message.user.username}}</a></small>
+        <p>Replied to room: <a href='{% url "profile" message.user.id %}'>@{{message.room.name}}</a></p>
+        <p>Commented: {{message.body|slice:":30"}}</p>
+        <small>{{message.updated|timesince}} ago</small>
+        <hr>
+    {% endfor %}
+</div>

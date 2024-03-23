@@ -61,7 +61,8 @@ def home(request):
     )
     alltopics=Topic.objects.all()
     roomscount=len(allroom)
-    context={'rooms':allroom,'topics':alltopics,'roomscount':roomscount}
+    recentactivity=Message.objects.all().filter(Q(room__topic__name__icontains=("" if q==None else q))).order_by('-updated','-created')[:10]
+    context={'rooms':allroom,'topics':alltopics,'roomscount':roomscount,'recentactivity':recentactivity}
     return render(request,'base/home.html',context)
 
 @login_required(login_url='login')
@@ -145,3 +146,12 @@ def editmessage(request,pk):
             return redirect('room',pk=message.room.id)
     return render(request,'base/editmessage.html',{'form':form})
 
+@login_required(login_url='login')
+def profilePage(request,pk):
+    user=User.objects.get(id=pk)
+    alltopics=Topic.objects.all()
+    room_message=user.message_set.all()
+    room=Room.objects.filter(participants=user)
+    roomcount=room.count()
+    context={'user':user,'rooms':room,'roomscount':roomcount,'recentactivity':room_message,'topics':alltopics}
+    return render(request,'base/userprofile.html',context)

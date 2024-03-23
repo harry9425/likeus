@@ -1,0 +1,20 @@
+<div>        
+    <h4>Total {{roomscount}} rooms <h4>
+    <div>
+        <div>
+            <hr>
+
+            {% for x in rooms %}
+                <div>
+                    <h4>by: <a href='{% url "profile" x.host.id %}'>@{{x.host.username}}</a></h4>
+                    <small>Topic: {{x.topic.name}}</small><br>
+                        <a href="{% url 'room' x.id %}">
+                            <h3>Room --- {{x.name}}</h3>
+                        </a>
+                    <p>Description: {{x.description | slice:":100"}}..</p>
+                </div>
+                <hr>
+            {% endfor %}
+        </div>
+    </div>
+</div>
