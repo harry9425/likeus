@@ -19,7 +19,9 @@
                     </a>
                 </h1>
                 <small>{{x.topic.name}}</small><br>
-                <small><a href='{% url "update-room" x.id%}'>Update Room</a></small>
+                <small><a href='{% url "update-room" x.id%}'>Edit Room</a> 
+                    <a href='{% url "delete-room" x.id%}'>Delete Room</a>
+                </small>
             </div>
         {% endfor %}
     </div>

@@ -2,27 +2,54 @@
 
 {% block content %}
 
-<h1>
-    This is Home Page
-</h1>
+<style>
 
-<small><a href={% url "create-room" %}>Click here to create a Room</a></small>
+    .home-container{
+        display:grid;
+        grid-template-columns:1fr 3fr;
+    }
 
-<div>
+</style>
+
+
+<div class="home-container">
     <div>
+        <h3>Browse Topics</h3>
         <hr>
-
-        {% for x in rooms %}
+        <div>
             <div>
-                <h4>@{{x.host.username}}</h4>
-                <h1>
-                    <a href="{% url 'room' x.id %}">
-                        RoomID: {{x.id}} --- {{x.name}}
-                    </a>
-                </h1>
-                <small>{{x.topic.name}}</small>
+                <a href="{% url "home" %}">All</a>
+                <br><hr>
             </div>
-        {% endfor %}
+            {% for x in topics %}
+                <div>
+                    <a href="{% url "home" %}?q={{x.name}}">{{x.name}}</a>
+                    <br><hr>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>        
+        <small><a href={% url "create-room" %}>Click here to create a Room</a></small>
+        <br>
+        <h4>{{roomscount}} rooms available<h4>
+        <div>
+            <div>
+                <hr>
+
+                {% for x in rooms %}
+                    <div>
+                        <h4>@{{x.host.username}}</h4>
+                        <small>{{x.topic.name}}</small><br>
+                            <a href="{% url 'room' x.id %}">
+                                <h3>RoomID: {{x.id}} --- {{x.name}}</h3>
+                            </a>
+                        <p>{{x.description | slice:":100"}}..</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
 
